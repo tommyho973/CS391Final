@@ -9,7 +9,7 @@ export default function TaskCard({task}: {task: PostProps}) {
     const [isFinished, setIsFinished] = useState(task.isfinished);
     const handleCheckboxChange = async () => {
         setIsFinished(!isFinished);
-        const updatedTask = await updateTask(task.id);
+        await updateTask(task.id);
     };
     return (
         <div className="bg-sky-400 rounded-x1 p-4 m-2 w-96">
