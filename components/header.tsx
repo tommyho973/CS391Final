@@ -1,3 +1,4 @@
+// Made by Camille Christie
 import Link from "next/link";
 export default function Header() {
     const linkStyling = "p-1 m-2 text-x1 hover:underline";

@@ -1,6 +1,7 @@
 import getCollection from "@/db";
 import OverdueTasksTracker from "@/components/overdue-task";
 import { PostProps } from "@/types";
+import TaskCard from "@/components/task-card";
 
 // Made by Michelle Sun
 async function getAllTasks(): Promise<PostProps[]> {
@@ -28,12 +29,8 @@ export default async function Home() {
       ) : (
         <ul>
           {tasks.map((task) => (
-            <li key={task.id}>
-              <strong>{task.task}</strong>
-              <p>Deadline: {new Date(task.deadline).toLocaleString()}</p>
-              <p>Status: {task.isfinished ? "Finished" : "Pending"}</p>
-            </li>
-          ))}
+                <TaskCard key={task.id} task={task}/>
+            ))}
         </ul>
       )}
 
