@@ -1,45 +1,14 @@
-// Made by Camille Christie (added styled-components - Michelle Sun)
-"use client";
+// Made by Camille Christie
 import Link from "next/link";
-import styled from 'styled-components';
-
-const HeaderContainer = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 5rem;
-`;
-
-const Title = styled.h2`
-  font-size: 2.25rem;
-  font-weight: 600;
-  padding: 1rem;
-`;
-
-const Nav = styled.nav`
-  padding: 0.5rem;
-  margin: 1rem;
-`;
-
-const StyledLink = styled(Link)`
-  padding: 0.25rem;
-  margin: 0.5rem;
-  font-size: 1.25rem;
-  text-decoration: none;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 export default function Header() {
-  return (
-    <HeaderContainer>
-      <Title>Daily Task Tracker</Title>
-      <Nav>
-        <StyledLink href="/">Home</StyledLink>
-        <StyledLink href="/addtask">Add Task</StyledLink>
-      </Nav>
-    </HeaderContainer>
-  );
+    const linkStyling = "p-1 m-2 text-x1 hover:underline";
+    return (
+        <header className="flex justify-between items-center h-20">
+            <h2 className="text-4x1 font-semibold p-4">Daily Task Tracker</h2>
+            <nav className="p-2 m-4">
+                <Link href="/" className={linkStyling}>Home</Link>
+                <Link href="/addtask" className={linkStyling}>Add Task</Link>
+            </nav>
+        </header>
+    );
 }
