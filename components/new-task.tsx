@@ -1,3 +1,4 @@
+//Made by Tommy Ho
 "use client";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
@@ -34,12 +35,14 @@ export default function NewTask({
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
 
+  //While waiting reset task and deadline to default state
   async function submitNewTask() {
     if (await createFunc(task, deadline)) {
       setTask("");
       setDeadline("");
     }
   }
+  //Form to submit new task to complete along with deadline, cannot submit unless both fields are filled
   return (
     <StyledForm
       onSubmit={(e) => {
