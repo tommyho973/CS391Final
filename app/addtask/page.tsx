@@ -14,8 +14,6 @@ export default function AddTaskPage() {
   return (
     <StyledDiv>
       <StyledForm>
-        <Label htmlFor="Title">Title</Label>
-        <Input id="title" type="text" placeholder="Enter title" />
         <Label htmlFor="Task">Task</Label>
         <Input id="task" type="text" placeholder="Enter task description" />
         <Label htmlFor="CompletionDate">Completion Date</Label>
