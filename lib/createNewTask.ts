@@ -1,3 +1,4 @@
+//Made by Tommy Ho
 "use server";
 import getCollection, { POSTS_COLLECTION } from "@/db";
 import { PostProps } from "@/types";
