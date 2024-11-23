@@ -1,6 +1,21 @@
 "use client";
-import { Button, FormHelperText, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useState } from "react";
+import styled from "styled-components";
+
+const StyledTextField = styled(TextField)`
+  background-color: white;
+  width: 100%;
+  border-radius: 4px;
+  & .MuiFilledInput-root {
+    background-color: white;
+  }
+
+  & .Mui-focused {
+    background-color: #f0f8ff; // Example of changing background on focus
+  }
+`;
+
 export default function NewTask({
   createFunc,
 }: {
@@ -23,22 +38,19 @@ export default function NewTask({
         submitNewTask();
       }}
     >
-      <TextField
+      <StyledTextField
         variant="filled"
-        sx={{ backgroundColor: "white", width: "100%" }}
         label="Task"
         value={task}
         onChange={(e) => setTask(e.target.value)}
       />
-      <TextField
+      <StyledTextField
         type="datetime-local"
         variant="filled"
-        sx={{ backgroundColor: "white", width: "100%" }}
         label="Deadline"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
       />
-      <FormHelperText>What&apos;s on your mind?</FormHelperText>
       <div className="w-full flex justify-content">
         <Button
           sx={{ width: "80px" }}
