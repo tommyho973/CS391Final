@@ -8,7 +8,7 @@ export default function NewTask({
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState("");
 
-  async function submitNewPost() {
+  async function submitNewTask() {
     if (await createFunc(task, deadline)) {
       setTask("");
       setDeadline("");
@@ -19,7 +19,7 @@ export default function NewTask({
       className="w-96 rounded-xl p-4 bg-sky-300"
       onSubmit={(e) => {
         e.preventDefault();
-        submitNewPost();
+        submitNewTask();
       }}
     >
       <TextField

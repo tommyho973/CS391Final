@@ -2,7 +2,7 @@
 "use server";
 import getCollection, { POSTS_COLLECTION } from "@/db";
 import { PostProps } from "@/types";
-export default async function createNewPost(
+export default async function createNewTask(
   task: string,
   deadline: string
 ): Promise<PostProps | null> {
