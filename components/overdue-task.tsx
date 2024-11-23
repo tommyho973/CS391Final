@@ -1,3 +1,7 @@
+// Made by Michelle Sun
+/* ADD A CLOSE OUT BUTTON */
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import type { PostProps } from '../types';
