@@ -1,5 +1,4 @@
 // Made by Michelle Sun
-/* ADD A CLOSE OUT BUTTON */
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -10,36 +9,38 @@ const TrackerContainer = styled.div`
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  width: 24rem;
+  width: 30vw;
+  min-width: 20rem;
+  max-width: 30rem;
   z-index: 50;
 `;
 
 const ScrollContainer = styled.div`
-  max-height: 24rem;
+  max-height: 70vh;
   overflow-y: auto;
   
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 0.5rem;
   }
   
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 4px;
+    border-radius: 0.25rem;
   }
   
   &::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 4px;
+    border-radius: 0.25rem;
   }
 `;
 
 const Alert = styled.div`
   background-color: #fee2e2;
-  border: 1px solid #ef4444;
+  border: 0.0625rem solid #ef4444;
   border-radius: 0.375rem;
   padding: 1rem;
   margin-bottom: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -89,8 +90,8 @@ const CloseButton = styled.button`
   font-size: 1.25rem;
   padding: 0;
   line-height: 1;
-  min-width: 24px;
-  min-height: 24px;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,75 +101,100 @@ const CloseButton = styled.button`
   }
 `;
 
+/**
+ * OverdueTasksTracker Component
+ * 
+ * This component displays notifications for tasks that have passed their deadline.
+ * Features:
+ * - automatically checks for overdue tasks every hour
+ * - allows users to dismiss individual notifications
+ * - displays task details and deadline information
+ * - scrollable container for multiple notifications
+ */
+
+// Extends the base PostProps: dismisses state for overdue tasks
 interface OverdueTask extends PostProps {
-  dismissed?: boolean;
+    dismissed?: boolean;
 }
 
 const OverdueTasksTracker = ({ tasks }: { tasks: PostProps[] }) => {
-  const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
-  const [dismissedTasks, setDismissedTasks] = useState<Set<string>>(new Set());
+    // Track overdue tasks and their states
+    const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
+    // Track dismissed task IDs
+    const [dismissedTasks, setDismissedTasks] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
+    useEffect(() => {
+    // Function to identify overdue tasks
     const checkOverdueTasks = () => {
-      const currentDate = new Date();
-      const overdueItems = tasks.filter(task => {
+        const currentDate = new Date();
+        const overdueItems = tasks.filter(task => {
+        // Skip tasks that are either finished or already dismissed
         if (task.isfinished || dismissedTasks.has(task.id)) return false;
         
+        // Convert deadline string to Date object
         const deadlineDate = new Date(task.deadline);
+        // if deadline is before current date : True
         return deadlineDate < currentDate;
-      });
-      
-      setOverdueTasks(overdueItems);
+        });
+        
+        setOverdueTasks(overdueItems);
     };
 
-    // Initial check
+    // Run initial check when component mounts or tasks/dismissedTasks change
     checkOverdueTasks();
 
-    // Set up interval to check every hour
+    // Set up hourly checks for overdue tasks
     const interval = setInterval(checkOverdueTasks, 60000 * 60);
 
-    // Cleanup
+    // Clean up interval when component unmounts or dependencies change
     return () => clearInterval(interval);
-  }, [tasks, dismissedTasks]);
+    }, [tasks, dismissedTasks]); 
 
-  const handleDismiss = (taskId: string) => {
+    // Handler for dismissing individual task notifications
+    const handleDismiss = (taskId: string) => {
     setDismissedTasks(prev => {
-      const newDismissed = new Set(prev);
-      newDismissed.add(taskId);
-      return newDismissed;
+        const newDismissed = new Set(prev);  // Create new Set to trigger re-render
+        newDismissed.add(taskId);
+        return newDismissed;
     });
-  };
+    };
 
-  const visibleTasks = overdueTasks.filter(task => !dismissedTasks.has(task.id));
-  
-  if (visibleTasks.length === 0) return null;
+    // Filter out dismissed tasks for display
+    const visibleTasks = overdueTasks.filter(task => !dismissedTasks.has(task.id));
+    
+    // Don't render anything if there are no overdue tasks to show
+    if (visibleTasks.length === 0) return null;
 
-  return (
+    return (
     <TrackerContainer>
-      <ScrollContainer>
+        <ScrollContainer>
+        {/* Map through visible tasks and create alert components */}
         {visibleTasks.map((task) => (
-          <Alert key={task.id}>
+            <Alert key={task.id}>
             <AlertHeader>
-              <AlertTitle>
-                <WarningIcon>⚠️</WarningIcon>
+                <AlertTitle>
+                <WarningIcon>⚠︎</WarningIcon>
                 Overdue Task
-              </AlertTitle>
-              <CloseButton 
+                </AlertTitle>
+                {/* dismiss button for overdue task*/}
+                <CloseButton 
                 onClick={() => handleDismiss(task.id)}
-                aria-label="Dismiss notification"
-              >
+                aria-label="Dismiss notification"  // For accessibility
+                >
                 ×
-              </CloseButton>
+                </CloseButton>
             </AlertHeader>
+                {/* display task description */}
             <TaskText>{task.task}</TaskText>
             <DueDate>
-              Was due on: {new Date(task.deadline).toLocaleString()}
+                {/* display deadline date */}
+                Was due on: {new Date(task.deadline).toLocaleString()}
             </DueDate>
-          </Alert>
+            </Alert>
         ))}
-      </ScrollContainer>
+        </ScrollContainer>
     </TrackerContainer>
-  );
+    );
 };
 
 export default OverdueTasksTracker;

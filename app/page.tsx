@@ -3,7 +3,7 @@ import OverdueTasksTracker from "@/components/overdue-task";
 import { PostProps } from "@/types";
 import TaskCard from "@/components/task-card";
 
-// Made by Michelle Sun
+// Made by Michelle Sun (Pulling objects from mongodb)
 async function getAllTasks(): Promise<PostProps[]> {
   const collection = await getCollection("posts-collection");
   const tasks = await collection
