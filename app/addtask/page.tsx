@@ -1,5 +1,5 @@
 //Made by Tommy Ho
-"use-client";
+"use client";
 import NewTask from "@/components/new-task";
 import createNewTask from "@/lib/createNewTask";
 export default function AddTaskPage() {
