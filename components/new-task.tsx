@@ -1,5 +1,4 @@
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { Textarea } from "@mui/joy";
 import { useState } from "react";
 export default function NewTask({
   createFunc,
@@ -30,15 +29,11 @@ export default function NewTask({
         value={task}
         onChange={(e) => setTask(e.target.value)}
       />
-      <Textarea
-        sx={{
-          padding: "0.5rem",
-          height: "100px",
-          width: "100%",
-          borderRadius: 0,
-        }}
-        variant="soft"
-        placeholder="Deadline"
+      <TextField
+        type="datetime-local"
+        variant="filled"
+        sx={{ backgroundColor: "white", width: "100%" }}
+        label="Deadline"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
       />
