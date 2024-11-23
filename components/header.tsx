@@ -6,6 +6,7 @@ export default function Header() {
             <h2 className="text-4x1 font-semibold p-4">Daily Task Tracker</h2>
             <nav className="p-2 m-4">
                 <Link href="/" className={linkStyling}>Home</Link>
+                <Link href="/addtask" className={linkStyling}>Add Task</Link>
             </nav>
         </header>
     );
