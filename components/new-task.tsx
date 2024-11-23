@@ -26,6 +26,14 @@ const StyledTextField = styled(TextField)`
     background-color: #f0f8ff; // Example of changing background on focus
   }
 `;
+const StyledButton = styled(Button)`
+  width: 80px;
+`;
+const StyledDiv = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: ;
+`;
 
 export default function NewTask({
   createFunc,
@@ -63,16 +71,15 @@ export default function NewTask({
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
       />
-      <div className="w-full flex justify-content">
-        <Button
-          sx={{ width: "80px" }}
+      <StyledDiv>
+        <StyledButton
           variant="contained"
           type="submit"
           disabled={task.length === 0 || deadline.length === 0}
         >
           Create
-        </Button>
-      </div>
+        </StyledButton>
+      </StyledDiv>
     </StyledForm>
   );
 }
