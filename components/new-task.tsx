@@ -3,12 +3,22 @@ import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import styled from "styled-components";
 
+const StyledForm = styled.form`
+  width: 24rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background-color: #7dd3fc;
+`;
 const StyledTextField = styled(TextField)`
   background-color: white;
   width: 100%;
   border-radius: 4px;
   & .MuiFilledInput-root {
     background-color: white;
+  }
+  & .MuiInputLabel-root {
+    transform: translateY(0);
+    font-size: 0.875rem;
   }
 
   & .Mui-focused {
@@ -31,8 +41,7 @@ export default function NewTask({
     }
   }
   return (
-    <form
-      className="w-96 rounded-xl p-4 bg-sky-300"
+    <StyledForm
       onSubmit={(e) => {
         e.preventDefault();
         submitNewTask();
@@ -61,6 +70,6 @@ export default function NewTask({
           Create
         </Button>
       </div>
-    </form>
+    </StyledForm>
   );
 }
