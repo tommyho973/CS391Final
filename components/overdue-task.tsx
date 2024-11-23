@@ -40,6 +40,17 @@ const Alert = styled.div`
   padding: 1rem;
   margin-bottom: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const AlertHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 0.5rem;
 `;
 
 const AlertTitle = styled.h4`
@@ -47,7 +58,8 @@ const AlertTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
-  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
 `;
 
 const TaskText = styled.p`
@@ -69,14 +81,38 @@ const WarningIcon = styled.span`
   color: #991b1b;
 `;
 
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #991b1b;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0;
+  line-height: 1;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: #7f1d1d;
+  }
+`;
+
+interface OverdueTask extends PostProps {
+  dismissed?: boolean;
+}
+
 const OverdueTasksTracker = ({ tasks }: { tasks: PostProps[] }) => {
-  const [overdueTasks, setOverdueTasks] = useState<PostProps[]>([]);
+  const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
+  const [dismissedTasks, setDismissedTasks] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const checkOverdueTasks = () => {
       const currentDate = new Date();
       const overdueItems = tasks.filter(task => {
-        if (task.isfinished) return false;
+        if (task.isfinished || dismissedTasks.has(task.id)) return false;
         
         const deadlineDate = new Date(task.deadline);
         return deadlineDate < currentDate;
@@ -88,24 +124,42 @@ const OverdueTasksTracker = ({ tasks }: { tasks: PostProps[] }) => {
     // Initial check
     checkOverdueTasks();
 
-    // Set up interval to check every minute
-    const interval = setInterval(checkOverdueTasks, 60000);
+    // Set up interval to check every hour
+    const interval = setInterval(checkOverdueTasks, 60000 * 60);
 
     // Cleanup
     return () => clearInterval(interval);
-  }, [tasks]);
+  }, [tasks, dismissedTasks]);
 
-  if (overdueTasks.length === 0) return null;
+  const handleDismiss = (taskId: string) => {
+    setDismissedTasks(prev => {
+      const newDismissed = new Set(prev);
+      newDismissed.add(taskId);
+      return newDismissed;
+    });
+  };
+
+  const visibleTasks = overdueTasks.filter(task => !dismissedTasks.has(task.id));
+  
+  if (visibleTasks.length === 0) return null;
 
   return (
     <TrackerContainer>
       <ScrollContainer>
-        {overdueTasks.map((task) => (
+        {visibleTasks.map((task) => (
           <Alert key={task.id}>
-            <AlertTitle>
-              <WarningIcon>⚠️</WarningIcon>
-              Overdue Task
-            </AlertTitle>
+            <AlertHeader>
+              <AlertTitle>
+                <WarningIcon>⚠️</WarningIcon>
+                Overdue Task
+              </AlertTitle>
+              <CloseButton 
+                onClick={() => handleDismiss(task.id)}
+                aria-label="Dismiss notification"
+              >
+                ×
+              </CloseButton>
+            </AlertHeader>
             <TaskText>{task.task}</TaskText>
             <DueDate>
               Was due on: {new Date(task.deadline).toLocaleString()}
