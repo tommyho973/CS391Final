@@ -28,7 +28,9 @@ export default async function Home() {
         <p>No tasks available</p>
       ) : (
         <ul>
-          {tasks.map((task) => (
+          {tasks
+          .filter((task) => !task.isfinished)
+          .map((task) => (
                 <TaskCard key={task.id} task={task}/>
             ))}
         </ul>
