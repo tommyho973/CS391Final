@@ -106,7 +106,6 @@ const CloseButton = styled.button`
   }
 `;
 
- * OverdueTasksTracker Component
 // Extends the base PostProps: dismisses state for overdue tasks
 interface OverdueTask extends PostProps {
     dismissed?: boolean;
