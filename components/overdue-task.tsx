@@ -1,4 +1,9 @@
 // Made by Michelle Sun
+/**
+ * Global Notification System for Overdue Tasks
+ * Displays floating notifications for any tasks that have passed their deadline.
+ * Auto-refreshes every hour and allows users to dismiss individual notifications.
+ */
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -101,100 +106,77 @@ const CloseButton = styled.button`
   }
 `;
 
-/**
  * OverdueTasksTracker Component
- * 
- * This component displays notifications for tasks that have passed their deadline.
- * Features:
- * - automatically checks for overdue tasks every hour
- * - allows users to dismiss individual notifications
- * - displays task details and deadline information
- * - scrollable container for multiple notifications
- */
-
 // Extends the base PostProps: dismisses state for overdue tasks
 interface OverdueTask extends PostProps {
     dismissed?: boolean;
 }
 
+// Main tracker component - handles monitoring and displaying overdue tasks
 const OverdueTasksTracker = ({ tasks }: { tasks: PostProps[] }) => {
-    // Track overdue tasks and their states
-    const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
-    // Track dismissed task IDs
-    const [dismissedTasks, setDismissedTasks] = useState<Set<string>>(new Set());
+  // Track both overdue tasks and which ones user has dismissed
+  const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
+  const [dismissedTasks, setDismissedTasks] = useState<Set<string>>(new Set());
 
-    useEffect(() => {
-    // Function to identify overdue tasks
-    const checkOverdueTasks = () => {
-        const currentDate = new Date();
-        const overdueItems = tasks.filter(task => {
-        // Skip tasks that are either finished or already dismissed
-        if (task.isfinished || dismissedTasks.has(task.id)) return false;
-        
-        // Convert deadline string to Date object
-        const deadlineDate = new Date(task.deadline);
-        // if deadline is before current date : True
-        return deadlineDate < currentDate;
-        });
-        
-        setOverdueTasks(overdueItems);
-    };
+  useEffect(() => {
+      // Check for overdue tasks by comparing current time to deadlines
+      const checkOverdueTasks = () => {
+          const currentDate = new Date();
+          const overdueItems = tasks.filter(task => {
+              // Skip finished or dismissed tasks
+              if (task.isfinished || dismissedTasks.has(task.id)) return false;
+              
+              const deadlineDate = new Date(task.deadline);
+              return deadlineDate < currentDate;
+          });
+          
+          setOverdueTasks(overdueItems);
+      };
 
-    // Run initial check when component mounts or tasks/dismissedTasks change
-    checkOverdueTasks();
+      // Run check immediately and set up hourly checks
+      checkOverdueTasks();
+      const interval = setInterval(checkOverdueTasks, 60000 * 60);
+      return () => clearInterval(interval);
+  }, [tasks, dismissedTasks]); 
 
-    // Set up hourly checks for overdue tasks
-    const interval = setInterval(checkOverdueTasks, 60000 * 60);
+  // Allow users to dismiss individual notifications
+  const handleDismiss = (taskId: string) => {
+      setDismissedTasks(prev => {
+          const newDismissed = new Set(prev);
+          newDismissed.add(taskId);
+          return newDismissed;
+      });
+  };
 
-    // Clean up interval when component unmounts or dependencies change
-    return () => clearInterval(interval);
-    }, [tasks, dismissedTasks]); 
+  const visibleTasks = overdueTasks.filter(task => !dismissedTasks.has(task.id));
+  if (visibleTasks.length === 0) return null;
 
-    // Handler for dismissing individual task notifications
-    const handleDismiss = (taskId: string) => {
-    setDismissedTasks(prev => {
-        const newDismissed = new Set(prev);  // Create new Set to trigger re-render
-        newDismissed.add(taskId);
-        return newDismissed;
-    });
-    };
-
-    // Filter out dismissed tasks for display
-    const visibleTasks = overdueTasks.filter(task => !dismissedTasks.has(task.id));
-    
-    // Don't render anything if there are no overdue tasks to show
-    if (visibleTasks.length === 0) return null;
-
-    return (
-    <TrackerContainer>
-        <ScrollContainer>
-        {/* Map through visible tasks and create alert components */}
-        {visibleTasks.map((task) => (
-            <Alert key={task.id}>
-            <AlertHeader>
-                <AlertTitle>
-                <WarningIcon>⚠︎</WarningIcon>
-                Overdue Task
-                </AlertTitle>
-                {/* dismiss button for overdue task*/}
-                <CloseButton 
-                onClick={() => handleDismiss(task.id)}
-                aria-label="Dismiss notification"  // For accessibility
-                >
-                ×
-                </CloseButton>
-            </AlertHeader>
-                {/* display task description */}
-            <TaskText>{task.task}</TaskText>
-            <DueDate>
-                {/* display deadline date */}
-                Was due on: {new Date(task.deadline).toLocaleString()}
-            </DueDate>
-            </Alert>
-        ))}
-        </ScrollContainer>
-    </TrackerContainer>
-    );
+  return (
+      <TrackerContainer>
+          <ScrollContainer>
+              {visibleTasks.map((task) => (
+                  <Alert key={task.id}>
+                      <AlertHeader>
+                          <AlertTitle>
+                              <WarningIcon>⚠︎</WarningIcon>
+                              Overdue Task
+                          </AlertTitle>
+                          <CloseButton 
+                              onClick={() => handleDismiss(task.id)}
+                              aria-label="Dismiss notification"
+                          >
+                              ×
+                          </CloseButton>
+                      </AlertHeader>
+                      <TaskText>{task.task}</TaskText>
+                      <DueDate>
+                          Was due on: {new Date(task.deadline).toLocaleString()}
+                      </DueDate>
+                  </Alert>
+              ))}
+          </ScrollContainer>
+      </TrackerContainer>
+  );
 };
 
 export default OverdueTasksTracker;

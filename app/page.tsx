@@ -1,9 +1,16 @@
+/**
+ * Main Task List Page
+ * Displays all active tasks and incorporates the overdue task notification system.
+ * Handles data fetching and task filtering.
+ */
+
 import getCollection from "@/db";
 import OverdueTasksTracker from "@/components/overdue-task";
 import { PostProps } from "@/types";
 import TaskCard from "@/components/task-card";
 
 // Made by Michelle Sun (Pulling objects from mongodb)
+// Fetch all tasks from MongoDB and format them for frontend use
 async function getAllTasks(): Promise<PostProps[]> {
   const collection = await getCollection("posts-collection");
   const tasks = await collection
@@ -18,8 +25,10 @@ async function getAllTasks(): Promise<PostProps[]> {
   return tasks;
 }
 
+// Main page component - handles task display and filtering
 export default async function Home() {
-  const tasks = await getAllTasks(); // Fetch tasks directly in a Server Component
+  // Fetch tasks server-side for better performance
+  const tasks = await getAllTasks();
 
   return (
     <>
@@ -28,6 +37,7 @@ export default async function Home() {
         <p>No tasks available</p>
       ) : (
         <ul>
+          {/* Only show unfinished tasks */}
           {tasks
           .filter((task) => !task.isfinished)
           .map((task) => (
@@ -36,7 +46,7 @@ export default async function Home() {
         </ul>
       )}
 
-      {/* Example use of OverdueTasksTracker */}
+      {/* Add overdue task notifications */}
       <OverdueTasksTracker tasks={tasks} />
     </>
   );
