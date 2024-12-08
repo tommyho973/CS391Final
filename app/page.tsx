@@ -13,9 +13,10 @@ import TaskCard from "@/components/task-card";
 // Fetch all tasks from MongoDB and format them for frontend use
 async function getAllTasks(): Promise<PostProps[]> {
   const collection = await getCollection("posts-collection");
+  // Convert MongoDB objects to plain objects by picking only needed fields
   const tasks = await collection
     .find({})
-    .map((doc) => ({
+    .map((doc): PostProps => ({
       id: doc._id.toHexString(), // Convert ObjectId to string
       task: doc.task,
       isfinished: doc.isfinished,
@@ -25,11 +26,10 @@ async function getAllTasks(): Promise<PostProps[]> {
   return tasks;
 }
 
-// Main page component - handles task display and filtering
 export default async function Home() {
-  // Fetch tasks server-side for better performance
+  // Fetch tasks server-side for immediate data availability
   const tasks = await getAllTasks();
-
+ 
   return (
     <>
       <h1>Task List</h1>
@@ -45,9 +45,9 @@ export default async function Home() {
             ))}
         </ul>
       )}
-
-      {/* Add overdue task notifications */}
+ 
+      {/* Overdue task notifications */}
       <OverdueTasksTracker tasks={tasks} />
     </>
   );
-}
+ }
