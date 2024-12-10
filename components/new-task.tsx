@@ -10,6 +10,7 @@ const StyledForm = styled.form`
   padding: 1rem;
   background-color: #7dd3fc;
 `;
+//Added the Mui Text Field settings in order to make the form visible and not covered by the Date Time picker
 const StyledTextField = styled(TextField)`
   background-color: white;
   width: 100%;
