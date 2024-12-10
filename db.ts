@@ -1,4 +1,6 @@
 //Made by Tommy Ho
+//Global Comment: db.ts was made in order to create a connection to the MongoDB database and create a new collection under the name posts-collection
+//Calls to this function may need to setup their own mongodb collection, since the current implementation is using our own personal databases.
 import { MongoClient, Db, Collection } from "mongodb";
 //Converts MONGO_URI to string
 const MONGO_URI = process.env.MONGO_URI as string;
